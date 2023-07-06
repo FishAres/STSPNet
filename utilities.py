@@ -4,6 +4,7 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 
 
+
 def train(args, device, train_generator, model, criterion, optimizer):
     """
     Train model
@@ -11,21 +12,24 @@ def train(args, device, train_generator, model, criterion, optimizer):
     model.train()
 
     # Get inputs and labels
-    inputs, labels, _, mask, _ = train_generator.generate_batch()
-
+    inputs, inputs_prev, labels, _, mask, _ = train_generator.generate_batch()
     # Send to device
     inputs = torch.from_numpy(inputs).to(device)
+    inputs_prev = torch.from_numpy(inputs_prev).to(device)
     labels = torch.from_numpy(labels).to(device)
     mask = torch.from_numpy(mask).to(device)
 
     # Initialize syn_x or hidden state
-    if args.model == 'STPNet' or args.model == 'STPRNN':
+    if args.model == 'STPNet' or args.model == 'STPRNN' or args.model == 'STPENet':
         model.syn_x = model.init_syn_x(args.batch_size).to(device)
     if args.model == 'RNN' or args.model == 'STPRNN':
         model.hidden = model.init_hidden(args.batch_size).to(device)
 
     optimizer.zero_grad()
-    output, hidden, _ = model(inputs)
+    if args.model == 'PERNN':
+        output, hidden, _, a_hat = model(inputs, inputs_prev)
+    else:
+        output, hidden, _ = model(inputs, inputs_prev)
 
     # Convert to binary prediction
     output = torch.sigmoid(output)
@@ -44,14 +48,7 @@ def train(args, device, train_generator, model, criterion, optimizer):
     num_trials = (labels != 0).sum().item()
     assert (go + catch) == num_trials
 
-    # dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
-    # dprime_old = dprime(hit_rate, fa_rate)
     dprime_true = dprime(hit_rate, fa_rate)
-    # try:
-    #     assert dprime_true == dprime_old
-    # except:
-    #     print(hit_rate, fa_rate)
-    #     print(dprime_true, dprime_old)
 
     # Clamp to zero since we only want "go" labels
     loss = criterion(output, labels.clamp(min=0))
@@ -76,19 +73,20 @@ def test(args, device, test_generator, model):
 
     with torch.no_grad():
         # Get inputs and labels
-        inputs, labels, image,  _, omit = test_generator.generate_batch()
+        inputs, inputs_prev, labels, image,  _, omit = test_generator.generate_batch()
 
         # Send to device
         inputs = torch.from_numpy(inputs).to(device)
+        inputs_prev = torch.from_numpy(inputs_prev).to(device)
         labels = torch.from_numpy(labels).to(device)
 
         # Initialize syn_x or hidden state
-        if args.model == 'STPNet' or args.model == 'STPRNN':
+        if args.model == 'STPNet' or args.model == 'STPRNN' or args.model == 'STPENet':
             model.syn_x = model.init_syn_x(args.batch_size).to(device)
         if args.model == 'RNN' or args.model == 'STPRNN':
             model.hidden = model.init_hidden(args.batch_size).to(device)
 
-        output, hidden, input_syn = model(inputs)
+        output, hidden, input_syn = model(inputs, inputs_prev)
         # output, hidden, inputs, input_syn = model(inputs)  # for visualization below
 
     # __import__("pdb").set_trace()

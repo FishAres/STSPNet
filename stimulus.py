@@ -151,4 +151,7 @@ class StimGenerator:
         # Mask out first part of stimulus
         mask_array[:, :self.mask_steps] = 0
 
-        return input_array, label_array, image_array, mask_array, omit_array
+        inputs_prev = np.roll(input_array, 1, axis=1)
+        inputs_prev[:, 0, :] = 0
+
+        return input_array, inputs_prev, label_array, image_array, mask_array, omit_array

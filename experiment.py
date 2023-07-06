@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from stimulus import StimGenerator
-from models import STPNet, OptimizedRNN, STPRNN
+from models import STPNet, OptimizedRNN, STPRNN, STPENet
 from utilities import test, compute_confusion_matrix
 
 
@@ -55,6 +55,11 @@ def main():
     # Create model
     if args.model == 'STPNet':
         model = STPNet(input_dim=input_dim,
+                       hidden_dim=args.hidden_dim,
+                       syn_tau=args.syn_tau,
+                       noise_std=args.noise_std).to(device)
+    elif args.model == 'STPENet':
+        model = STPENet(input_dim=input_dim,
                        hidden_dim=args.hidden_dim,
                        syn_tau=args.syn_tau,
                        noise_std=args.noise_std).to(device)
