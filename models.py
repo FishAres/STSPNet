@@ -26,7 +26,7 @@ class STPNet(nn.Module):
                  hidden_dim=16,
                  noise_std=0.0,
                  syn_tau=6,      # syn_tau: recovery time constant
-                 syn_u=0.5):     # syn_u: calcium concentration
+                 syn_u=0.8):     # syn_u: calcium concentration
 
         super(STPNet, self).__init__()
         self.input_dim = input_dim
@@ -55,13 +55,12 @@ class STPNet(nn.Module):
             # backward Euler
             self.syn_x = (1 / k[:, i]) * ((1 / self.syn_tau) -
                                           ((1 / self.syn_tau) -
-                                           self.syn_x * k[:, i]) *
-                                          torch.exp(-k[:, i]))
+                                           self.syn_x * k[:, i]) * torch.exp(-k[:, i]))
             # # forward Euler
             # self.syn_x = self.syn_x + (1 - self.syn_x) / self.syn_tau - \
-            #     self.syn_u * self.syn_x * inputs[:, i]
-            # # clamp between [0,1]
-            # self.syn_x = torch.clamp(self.syn_x, min=0, max=1)
+            # self.syn_u * self.syn_x * inputs[:, i]
+            # clamp between [0,1]
+            self.syn_x = torch.clamp(self.syn_x, min=0, max=1)
 
             syn_x_list.append(self.syn_x)
 
@@ -105,7 +104,7 @@ class STPENet(nn.Module):
         # k = (1 / self.syn_tau) + self.syn_u * inputs
         # err = (1 / self.syn_tau) + self.syn_u * \
             # 0.5 * F.relu(inputs - inputs_prev)
-        err_ = 0.5 * (inputs - inputs_prev)
+        err_ = (inputs - inputs_prev)
         syn_x_list = [self.syn_x]
         for i in range(inputs.shape[1]-1):
             # update synaptic plasticity
@@ -117,7 +116,8 @@ class STPENet(nn.Module):
 
             # # forward Euler
             self.syn_x = self.syn_x + (1 - self.syn_x) / self.syn_tau - \
-                self.syn_u * self.syn_x * (-err_[:, i])
+                self.syn_u * self.syn_x * \
+                torch.abs(err_[:, i])  # ( 1 / (err_[:, i] + 0.0001))
             # clamp between [0,1]
             self.syn_x = torch.clamp(self.syn_x, min=0, max=1)
 
@@ -389,7 +389,7 @@ class PERNN2(nn.Module):
             alpha=noise_std) if noise_std > 0 else None
 
         self.register_parameter(
-            'weight_ih', nn.Parameter(torch.Tensor(input_dim * 2, hidden_dim)))
+            'weight_ih', nn.Parameter(torch.Tensor(input_dim, hidden_dim)))
         self.register_parameter(
             'weight_hh', nn.Parameter(torch.Tensor(hidden_dim, hidden_dim)))
         self.register_parameter(
@@ -435,9 +435,10 @@ class PERNN2(nn.Module):
 
         #     syn_x_list.append(self.syn_x)
 
-        # # concatenate original inputs and depressed inputs
+        # # # concatenate original inputs and depressed inputs
         # input_syn = torch.stack(syn_x_list, dim=1)
         # inputs = torch.cat((inputs, input_syn * inputs), dim=2)
+        # inputs = torch.cat((inputs, inputs), dim=2)
 
         hidden = []
         err = inputs_prev - inputs
@@ -454,7 +455,6 @@ class PERNN2(nn.Module):
 
         # update hidden layer
         hidden = torch.cat(hidden, dim=0)
-        ahats = torch.cat(ahats, dim=0)
         hidden = hidden.transpose(0, 1).contiguous()
         output = self.linear(hidden)
 

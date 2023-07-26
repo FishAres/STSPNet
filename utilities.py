@@ -4,7 +4,6 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 
 
-
 def train(args, device, train_generator, model, criterion, optimizer):
     """
     Train model
@@ -28,6 +27,8 @@ def train(args, device, train_generator, model, criterion, optimizer):
     optimizer.zero_grad()
     if args.model == 'PERNN':
         output, hidden, _, a_hat = model(inputs, inputs_prev)
+    elif args.model == 'STPNet' or args.model == 'RNN':
+        output, hidden, _ = model(inputs)
     else:
         output, hidden, _ = model(inputs, inputs_prev)
 
@@ -48,7 +49,8 @@ def train(args, device, train_generator, model, criterion, optimizer):
     num_trials = (labels != 0).sum().item()
     assert (go + catch) == num_trials
 
-    dprime_true = dprime(hit_rate, fa_rate)
+    dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
+    # dprime_true = dprime(hit_rate, fa_rate)
 
     # Clamp to zero since we only want "go" labels
     loss = criterion(output, labels.clamp(min=0))
@@ -86,7 +88,10 @@ def test(args, device, test_generator, model):
         if args.model == 'RNN' or args.model == 'STPRNN':
             model.hidden = model.init_hidden(args.batch_size).to(device)
 
-        output, hidden, input_syn = model(inputs, inputs_prev)
+        if args.model == 'STPNet' or args.model == 'RNN':
+            output, hidden, input_syn = model(inputs)
+        else:
+            output, hidden, input_syn = model(inputs, inputs_prev)
         # output, hidden, inputs, input_syn = model(inputs)  # for visualization below
 
     # __import__("pdb").set_trace()
@@ -167,9 +172,9 @@ def test(args, device, test_generator, model):
     num_trials = (labels != 0).sum().item()
     assert (go + catch) == num_trials
 
-    # dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
+    dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
     # dprime_old = dprime(hit_rate, fa_rate)
-    dprime_true = dprime(hit_rate, fa_rate)
+    # dprime_true = dprime(hit_rate, fa_rate)
     # try:
     #     assert dprime_true == dprime_old
     # except:

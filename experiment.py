@@ -4,8 +4,57 @@ import numpy as np
 import torch
 
 from stimulus import StimGenerator
-from models import STPNet, OptimizedRNN, STPRNN, STPENet
-from utilities import test, compute_confusion_matrix
+from models import *
+from utilities import *  # compute_confusion_matrix
+
+
+def test_PERNN2(args, device, test_generator, model):
+    """
+    Test model, get predictions and plot confusion matrix
+    """
+    model.eval()
+
+    with torch.no_grad():
+        # Get inputs and labels
+        inputs, inputs_prev, labels, image,  _, omit = test_generator.generate_batch()
+
+        # Send to device
+        inputs = torch.from_numpy(inputs).to(device)
+        inputs_prev = torch.from_numpy(inputs_prev).to(device)
+        labels = torch.from_numpy(labels).to(device)
+
+        # Initialize syn_x or hidden state
+        model.syn_x = model.init_syn_x(args.batch_size).to(device)
+        model.hidden = model.init_hidden(args.batch_size).to(device)
+
+        output, hidden, inputs = model(inputs, inputs_prev)
+    # Convert to binary prediction
+    output = torch.sigmoid(output)
+    pred = torch.bernoulli(output).byte()
+
+    # Compute hit rate and false alarm rate
+    hit_rate = (pred * (labels == 1)).sum().float().item() / \
+        (labels == 1).sum().item()
+    fa_rate = (pred * (labels == -1)).sum().float().item() / \
+        (labels == -1).sum().item()
+
+    # Compute dprime
+    # dprime_true = dprime(hit_rate, fa_rate)
+    go = (labels == 1).sum().item()
+    catch = (labels == -1).sum().item()
+    num_trials = (labels != 0).sum().item()
+    assert (go + catch) == num_trials
+
+    # dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
+    # dprime_old = dprime(hit_rate, fa_rate)
+    dprime_true = dprime(hit_rate, fa_rate)
+    # try:
+    #     assert dprime_true == dprime_old
+    # except:
+    #     print(hit_rate, fa_rate)
+    #     print(dprime_true, dprime_old)
+
+    return dprime_true.item(), hit_rate, fa_rate, inputs, hidden, output, pred, image, labels, omit
 
 
 def main():
@@ -60,9 +109,9 @@ def main():
                        noise_std=args.noise_std).to(device)
     elif args.model == 'STPENet':
         model = STPENet(input_dim=input_dim,
-                       hidden_dim=args.hidden_dim,
-                       syn_tau=args.syn_tau,
-                       noise_std=args.noise_std).to(device)
+                        hidden_dim=args.hidden_dim,
+                        syn_tau=args.syn_tau,
+                        noise_std=args.noise_std).to(device)
     elif args.model == 'STPRNN':
         model = STPRNN(input_dim=input_dim,
                        hidden_dim=args.hidden_dim,
@@ -72,6 +121,10 @@ def main():
         model = OptimizedRNN(input_dim=input_dim,
                              hidden_dim=args.hidden_dim,
                              noise_std=args.noise_std).to(device)
+    elif args.model == 'PERNN2':
+        model = PERNN2(input_dim=input_dim,
+                       hidden_dim=args.hidden_dim,
+                       noise_std=args.noise_std).to(device)
     else:
         raise ValueError("Model not found")
 
@@ -79,8 +132,12 @@ def main():
     model.load_state_dict(torch.load(args.model_path)['state_dict'])
 
     # Test model
-    dprime, hr, far, input, hidden, output, pred, image, labels, omit = test(
-        args, device, test_generator, model)
+    if args.model == 'PERNN2':
+        dprime, hr, far, input, hidden, output, pred, image, labels, omit = test_PERNN2(
+            args, device, test_generator, model)
+    else:
+        dprime, hr, far, input, hidden, output, pred, image, labels, omit = test(
+            args, device, test_generator, model)
 
     # Save results
     results_dict = {}

@@ -92,7 +92,7 @@ def main():
     # Define loss function
     criterion = torch.nn.BCEWithLogitsLoss(
         reduction='none', pos_weight=torch.tensor([args.pos_weight]).to(device))
-    optimizer = torch.optim.Adam(model.parameters())
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     # Initialize tracking variables
     loss_list = []
@@ -132,7 +132,6 @@ def main():
                 'loss': loss_list,
                 'dprime': dprime_list,
                 'state_dict': model.state_dict()}, save_path)
-
 
 
 if __name__ == '__main__':

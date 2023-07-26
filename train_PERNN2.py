@@ -28,7 +28,7 @@ def train(args, device, train_generator, model, criterion, optimizer):
     model.hidden = model.init_hidden(args.batch_size).to(device)
 
     optimizer.zero_grad()
-    output, hidden, inputs = model(inputs)
+    output, hidden, inputs = model(inputs, inputs_prev)
 
     # Convert to binary prediction
     output = torch.sigmoid(output)
@@ -82,7 +82,7 @@ def test(args, device, test_generator, model):
         model.syn_x = model.init_syn_x(args.batch_size).to(device)
         model.hidden = model.init_hidden(args.batch_size).to(device)
 
-        output, hidden, inputs = model(inputs)
+        output, hidden, inputs = model(inputs, inputs_prev)
     # Convert to binary prediction
     output = torch.sigmoid(output)
     pred = torch.bernoulli(output).byte()
@@ -112,7 +112,7 @@ def test(args, device, test_generator, model):
     return dprime_true.item(), hit_rate, fa_rate, inputs, hidden, output, pred, image, labels, omit
 
 
-def train_PERNN():
+def train_PERNN2():
     # Training settings
     parser = argparse.ArgumentParser(description='Models of change detection')
     parser.add_argument('--image-set', type=str, default='A', metavar='I',
