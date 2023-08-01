@@ -20,13 +20,65 @@ class CoupledGaussianDropout(nn.Module):
         return x * epsilon
 
 
+# class STPNet(nn.Module):
+#     def __init__(self,
+#                  input_dim=64,
+#                  hidden_dim=16,
+#                  noise_std=0.0,
+#                  syn_tau=6,      # syn_tau: recovery time constant
+#                  syn_u=0.8):     # syn_u: calcium concentration
+
+#         super(STPNet, self).__init__()
+#         self.input_dim = input_dim
+#         self.hidden_dim = hidden_dim
+#         self.syn_tau = syn_tau
+#         self.syn_u = syn_u
+
+#         self.noise = CoupledGaussianDropout(
+#             alpha=noise_std) if noise_std > 0 else None
+#         self.linear1 = nn.Linear(input_dim, hidden_dim)
+#         self.linear2 = nn.Linear(hidden_dim, 1)
+
+#     def init_syn_x(self, batch_size=128):
+#         """Initialize syn_x for the input units."""
+#         return torch.ones([batch_size, self.input_dim])
+
+#     def forward(self, inputs):
+#         # add noise
+#         if self.noise:
+#             inputs = F.relu(self.noise(inputs))
+
+#         k = (1 / self.syn_tau) + self.syn_u * inputs
+#         syn_x_list = [self.syn_x]
+#         for i in range(inputs.shape[1]-1):
+#             # update synaptic plasticity
+#             # backward Euler
+#             self.syn_x = (1 / k[:, i]) * ((1 / self.syn_tau) -
+#                                           ((1 / self.syn_tau) -
+#                                            self.syn_x * k[:, i]) * torch.exp(-k[:, i]))
+#             # # forward Euler
+#             # self.syn_x = self.syn_x + (1 - self.syn_x) / self.syn_tau - \
+#             # self.syn_u * self.syn_x * inputs[:, i]
+#             # clamp between [0,1]
+#             # self.syn_x = torch.clamp(self.syn_x, min=0, max=1)
+
+#             syn_x_list.append(self.syn_x)
+
+#         input_syn = torch.stack(syn_x_list, dim=1)
+#         hidden = F.relu(self.linear1(input_syn * inputs))
+#         if self.noise:
+#             hidden = F.relu(self.noise(hidden))
+#         output = self.linear2(hidden)
+
+#         return output, hidden, inputs  # , input_syn
+
 class STPNet(nn.Module):
     def __init__(self,
                  input_dim=64,
                  hidden_dim=16,
                  noise_std=0.0,
                  syn_tau=6,      # syn_tau: recovery time constant
-                 syn_u=0.8):     # syn_u: calcium concentration
+                 syn_u=0.5):     # syn_u: calcium concentration
 
         super(STPNet, self).__init__()
         self.input_dim = input_dim
@@ -55,11 +107,12 @@ class STPNet(nn.Module):
             # backward Euler
             self.syn_x = (1 / k[:, i]) * ((1 / self.syn_tau) -
                                           ((1 / self.syn_tau) -
-                                           self.syn_x * k[:, i]) * torch.exp(-k[:, i]))
+                                           self.syn_x * k[:, i]) *
+                                          torch.exp(-k[:, i]))
             # # forward Euler
             # self.syn_x = self.syn_x + (1 - self.syn_x) / self.syn_tau - \
-            # self.syn_u * self.syn_x * inputs[:, i]
-            # clamp between [0,1]
+            #     self.syn_u * self.syn_x * inputs[:, i]
+            # # clamp between [0,1]
             # self.syn_x = torch.clamp(self.syn_x, min=0, max=1)
 
             syn_x_list.append(self.syn_x)
@@ -103,24 +156,23 @@ class STPENet(nn.Module):
             # inputs_prev = F.relu(self.noise(inputs_prev))
         # k = (1 / self.syn_tau) + self.syn_u * inputs
         err = (1 / self.syn_tau) + self.syn_u * \
-            F.elu(inputs - inputs_prev)
-        # err = 0.5 * F.tanh(inputs - inputs_prev)
+            0.5 * F.relu(inputs - inputs_prev)
+
         # print(torch.mean(err))
         syn_x_list = [self.syn_x]
         for i in range(inputs.shape[1]-1):
             # update synaptic plasticity
             # backward Euler
-            # self.syn_x = (1 / err[:, i]) * ((1 / self.syn_tau) -
-            # ((1 / self.syn_tau) -
-            #  self.syn_x * err[:, i]) *
-            # torch.exp(-err[:, i]))
+            self.syn_x = (1 / err[:, i]) * ((1 / self.syn_tau) -
+                                            ((1 / self.syn_tau) -
+                                             self.syn_x * err[:, i]) * torch.exp(-err[:, i]))
 
             # # forward Euler
-            self.syn_x = self.syn_x + (1 - self.syn_x) / self.syn_tau - \
-                self.syn_u * self.syn_x * err[:, i]
+            # self.syn_x = self.syn_x + (1 - self.syn_x) / self.syn_tau - \
+            # self.syn_u * self.syn_x * err[:, i]
             # torch.abs(err[:, i])  # ( 1 / (err_[:, i] + 0.0001))
             # clamp between [0,1]
-            self.syn_x = torch.clamp(self.syn_x, min=0, max=1)
+            # self.syn_x = torch.clamp(self.syn_x, min=0, max=1)
 
             syn_x_list.append(self.syn_x)
 

@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from stimulus import StimGenerator
-from models import *
+from models import STPNet, OptimizedRNN, STPRNN
 from utilities import train
 
 
@@ -75,24 +75,13 @@ def main():
         model = OptimizedRNN(input_dim=input_dim,
                              hidden_dim=args.hidden_dim,
                              noise_std=args.noise_std).to(device)
-    elif args.model == 'STPENet':
-        model = STPENet(input_dim=input_dim,
-                        hidden_dim=args.hidden_dim,
-                        syn_tau=args.syn_tau,
-                        noise_std=args.noise_std).to(device)
-    elif args.model == 'PERNN':
-        model = PERNN(input_dim=input_dim,
-                      hidden_dim=args.hidden_dim,
-                      syn_tau=args.syn_tau,
-                      noise_std=args.noise_std).to(device)
-
     else:
         raise ValueError("Model not found")
 
     # Define loss function
     criterion = torch.nn.BCEWithLogitsLoss(
         reduction='none', pos_weight=torch.tensor([args.pos_weight]).to(device))
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters())
 
     # Initialize tracking variables
     loss_list = []
