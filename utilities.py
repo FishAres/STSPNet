@@ -43,13 +43,13 @@ def train(args, device, train_generator, model, criterion, optimizer):
         (labels == -1).sum().item()
 
     # Compute dprime
-    # dprime_true = dprime(hit_rate, fa_rate)
-    go = (labels == 1).sum().item()
-    catch = (labels == -1).sum().item()
-    num_trials = (labels != 0).sum().item()
-    assert (go + catch) == num_trials
+    dprime_true = dprime(hit_rate, fa_rate)
+    # go = (labels == 1).sum().item()
+    # catch = (labels == -1).sum().item()
+    # num_trials = (labels != 0).sum().item()
+    # assert (go + catch) == num_trials
 
-    dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
+    # dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
     # dprime_true = dprime(hit_rate, fa_rate)
 
     # Clamp to zero since we only want "go" labels
@@ -172,9 +172,9 @@ def test(args, device, test_generator, model):
     num_trials = (labels != 0).sum().item()
     assert (go + catch) == num_trials
 
-    dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
+    # dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
     # dprime_old = dprime(hit_rate, fa_rate)
-    # dprime_true = dprime(hit_rate, fa_rate)
+    dprime_true = dprime(hit_rate, fa_rate)
     # try:
     #     assert dprime_true == dprime_old
     # except:
