@@ -153,10 +153,9 @@ class STPENet(nn.Module):
         # add noise
         if self.noise:
             inputs = F.relu(self.noise(inputs))
-            # inputs_prev = F.relu(self.noise(inputs_prev))
-        # k = (1 / self.syn_tau) + self.syn_u * inputs
+            inputs_prev = F.relu(self.noise(inputs_prev))
         err = (1 / self.syn_tau) + self.syn_u * \
-            0.5 * F.relu(inputs - inputs_prev)
+            0.5 * torch.exp(inputs - inputs_prev)
 
         # print(torch.mean(err))
         syn_x_list = [self.syn_x]
