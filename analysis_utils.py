@@ -46,7 +46,6 @@ def get_go_trials(model_data, pref_image):
 
 def plot_go_trial(go_trial, ax):
     # fig, ax = plt.subplots(figsize=(3, 2))
-
     # ax.plot(go_trial.mean(axis=0), color='blue', linewidth=3)
     ax.plot(go_trial.mean(axis=0) / go_trial.mean(axis=0).max(),
             color='blue', linewidth=3)
@@ -55,6 +54,14 @@ def plot_go_trial(go_trial, ax):
     # ax.set_ylim([0, 1.02])
     ax.set_xlabel('time after change (s)')
     ax.set_ylabel('a.u.')
+
+
+def get_adapt_mean_slope(go_trial):
+    x = np.arange(4)
+    # starting at event, 3::
+    y = go_trial[:, ::3].mean(axis=0)[3::]
+    g, _ = np.polyfit(x, y, 1)
+    return g
 
 
 def get_n_reps(model_data):
@@ -167,13 +174,45 @@ def plot_repeat_distances(model_df, ax):
     ax.legend(['Euclidean', 'PC1', 'PC2'], frameon=False)
 
 
+def get_omit_trials(model_data):
+    input_act = model_data['input']
+    omit = model_data['omit']
+    # find omitted trials
+    idx = np.argwhere(omit == 1)
+
+    omit_trial = []
+    for trial in idx:
+        trial_chunk = input_act[trial[0], (trial[1]-9):(trial[1]+9+1)]
+        if trial_chunk.shape[0] == 19:
+            omit_trial.append(trial_chunk)
+
+    omit_trial = np.stack(omit_trial).mean(axis=0).transpose()
+    return omit_trial
+
+
+def plot_omit_mean(omit_trial, ax):
+    ax.plot(omit_trial.mean(axis=0) / omit_trial.mean(axis=0).max(),
+            color='blue', linewidth=3)
+    # ax.plot(omit_trial.T)
+    # ax.plot(omit_trial.mean(axis=0), color='blue', linewidth=3)
+
+    ax.set_xticks(np.linspace(0, 18, 3), (-2.25, 0, 2.25))
+    # ax.set_yticks([0, 0.5, 1])
+    # ax.set_ylim([0, 1.02])
+
+    ax.set_xlabel('time after omit (s)')
+    ax.set_ylabel('a.u.')
+
+
 def plot_model_tings(result_path):
     model_data, pref_image = get_acts(result_path)
     go_trial = get_go_trials(model_data, pref_image)
     model_df = get_model_df(model_data)
+    omit_trial = get_omit_trials(model_data)
     # plot
     fig, ax = plt.subplots(2, 2, figsize=(20, 20))
     plot_go_trial(go_trial, ax[0, 0])
-    plot_stim_pca(model_df, ax[0, 1])
-    plot_repeat_pca(model_df, ax[1, 0])
-    plot_repeat_distances(model_df, ax[1, 1])
+    # plot_stim_pca(model_df, ax[0, 1])
+    plot_repeat_pca(model_df, ax[0, 1])
+    plot_repeat_distances(model_df, ax[1, 0])
+    plot_omit_mean(omit_trial, ax[1, 1])

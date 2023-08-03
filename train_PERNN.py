@@ -12,7 +12,7 @@ def PERNN_loss(output, inputs_post, labels, a_hat, rnn_criterion):
     L1 = rnn_criterion(output, labels.clamp(min=0))
     # print(inputs.shape, a_hat.shape)
     L2 = torch.sum((inputs_post - a_hat)**2)
-    return 10 * L1 + 0.5 * L2
+    return L1 + 0.05 * L2
 
 
 def train_me(args, device, train_generator, model, optimizer):

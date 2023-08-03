@@ -85,6 +85,11 @@ def main():
                       hidden_dim=args.hidden_dim,
                       syn_tau=args.syn_tau,
                       noise_std=args.noise_std).to(device)
+    elif args.model == 'PERNN2':
+        model = PERNN2(input_dim=input_dim,
+                       hidden_dim=args.hidden_dim,
+                       syn_tau=args.syn_tau,
+                       noise_std=args.noise_std).to(device)
 
     else:
         raise ValueError("Model not found")
