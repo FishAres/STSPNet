@@ -1,0 +1,44 @@
+wandb_version: 1
+
+dprime_targ:
+  desc: null
+  value: 1.6850776081711014
+patience:
+  desc: null
+  value: 30
+pos_weight:
+  desc: null
+  value: 3.7987807314788697
+syn_tau:
+  desc: null
+  value: 7.498506198759646
+_wandb:
+  desc: null
+  value:
+    python_version: 3.9.16
+    cli_version: 0.15.8
+    framework: torch
+    is_jupyter_run: true
+    is_kaggle_kernel: true
+    start_time: 1691073365.982408
+    t:
+      1:
+      - 1
+      - 5
+      - 53
+      - 55
+      2:
+      - 1
+      - 5
+      - 53
+      - 55
+      3:
+      - 2
+      - 23
+      - 37
+      4: 3.9.16
+      5: 0.15.8
+      8:
+      - 1
+      - 2
+      - 5

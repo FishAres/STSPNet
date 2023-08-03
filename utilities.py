@@ -4,6 +4,15 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 
 
+def get_hit_false_rate(pred, labels):
+    # Compute hit rate and false alarm rate
+    hit_rate = (pred * (labels == 1)).sum().float().item() / \
+        (labels == 1).sum().item()
+    fa_rate = (pred * (labels == -1)).sum().float().item() / \
+        (labels == -1).sum().item()
+    return hit_rate, fa_rate
+
+
 def train(args, device, train_generator, model, criterion, optimizer):
     """
     Train model
@@ -39,22 +48,10 @@ def train(args, device, train_generator, model, criterion, optimizer):
     pred = torch.bernoulli(output).byte()
 
     # Compute hit rate and false alarm rate
-    hit_rate = (pred * (labels == 1)).sum().float().item() / \
-        (labels == 1).sum().item()
-    fa_rate = (pred * (labels == -1)).sum().float().item() / \
-        (labels == -1).sum().item()
-
+    hit_rate, fa_rate = get_hit_false_rate(pred, labels)
     # Compute dprime
     dprime_true = dprime(hit_rate, fa_rate)
-    # go = (labels == 1).sum().item()
-    # catch = (labels == -1).sum().item()
-    # num_trials = (labels != 0).sum().item()
-    # assert (go + catch) == num_trials
 
-    # dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
-    # dprime_true = dprime(hit_rate, fa_rate)
-
-    # Clamp to zero since we only want "go" labels
     loss = criterion(output, labels.clamp(min=0))
     # Apply mask and take mean
     loss = (loss * mask).mean()

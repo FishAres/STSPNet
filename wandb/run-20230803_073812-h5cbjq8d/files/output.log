@@ -1,0 +1,6 @@
+
+Epoch: 100  loss: 0.4643  dprime: 0.52
+Epoch: 200  loss: 0.4548  dprime: 0.55
+Epoch: 300  loss: 0.4390  dprime: 1.01
+Epoch: 400  loss: 0.4307  dprime: 1.27
+Epoch: 500  loss: 0.4244  dprime: 1.31

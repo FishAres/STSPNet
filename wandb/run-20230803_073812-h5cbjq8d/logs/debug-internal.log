@@ -1,0 +1,98 @@
+2023-08-03 07:38:12,789 INFO    StreamThr :51536 [internal.py:wandb_internal():86] W&B internal server running at pid: 51536, started at: 2023-08-03 07:38:12.788899
+2023-08-03 07:38:12,790 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status
+2023-08-03 07:38:12,802 INFO    WriterThread:51536 [datastore.py:open_for_write():85] open: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/run-h5cbjq8d.wandb
+2023-08-03 07:38:12,805 DEBUG   SenderThread:51536 [sender.py:send():379] send: header
+2023-08-03 07:38:12,862 DEBUG   SenderThread:51536 [sender.py:send():379] send: run
+2023-08-03 07:38:13,102 INFO    SenderThread:51536 [dir_watcher.py:__init__():211] watching files in: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files
+2023-08-03 07:38:13,102 INFO    SenderThread:51536 [sender.py:_start_run_threads():1121] run started: h5cbjq8d with start time 1691073492.788609
+2023-08-03 07:38:13,102 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: summary_record
+2023-08-03 07:38:13,103 INFO    SenderThread:51536 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-03 07:38:13,107 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: check_version
+2023-08-03 07:38:13,107 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: check_version
+2023-08-03 07:38:13,311 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: run_start
+2023-08-03 07:38:13,316 DEBUG   HandlerThread:51536 [system_info.py:__init__():31] System info init
+2023-08-03 07:38:13,316 DEBUG   HandlerThread:51536 [system_info.py:__init__():46] System info init done
+2023-08-03 07:38:13,316 INFO    HandlerThread:51536 [system_monitor.py:start():181] Starting system monitor
+2023-08-03 07:38:13,316 INFO    SystemMonitor:51536 [system_monitor.py:_start():145] Starting system asset monitoring threads
+2023-08-03 07:38:13,317 INFO    HandlerThread:51536 [system_monitor.py:probe():201] Collecting system info
+2023-08-03 07:38:13,317 INFO    SystemMonitor:51536 [interfaces.py:start():190] Started cpu monitoring
+2023-08-03 07:38:13,317 INFO    SystemMonitor:51536 [interfaces.py:start():190] Started disk monitoring
+2023-08-03 07:38:13,318 INFO    SystemMonitor:51536 [interfaces.py:start():190] Started gpu monitoring
+2023-08-03 07:38:13,318 INFO    SystemMonitor:51536 [interfaces.py:start():190] Started memory monitoring
+2023-08-03 07:38:13,319 INFO    SystemMonitor:51536 [interfaces.py:start():190] Started network monitoring
+2023-08-03 07:38:13,351 DEBUG   HandlerThread:51536 [system_info.py:probe():195] Probing system
+2023-08-03 07:38:13,358 DEBUG   HandlerThread:51536 [system_info.py:_probe_git():180] Probing git
+2023-08-03 07:38:13,370 DEBUG   HandlerThread:51536 [system_info.py:_probe_git():188] Probing git done
+2023-08-03 07:38:13,370 DEBUG   HandlerThread:51536 [system_info.py:probe():240] Probing system done
+2023-08-03 07:38:13,371 DEBUG   HandlerThread:51536 [system_monitor.py:probe():210] {'os': 'Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-glibc2.28', 'python': '3.9.16', 'heartbeatAt': '2023-08-03T14:38:13.351519', 'startedAt': '2023-08-03T14:38:12.777938', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': '<python with no main file>', 'git': {'remote': 'https://github.com/FishAres/STSPNet.git', 'commit': 'd9116f99e91c2f657fb489a1001a32fb8a19357e'}, 'email': 'fiseraris@gmail.com', 'root': '/mmfs1/gscratch/rao/aresf/Code/STSPNet', 'host': 'g3022', 'username': 'aresf', 'executable': '/gscratch/rao/aresf/miniconda3/envs/stspnet/bin/python', 'cpu_count': 40, 'cpu_count_logical': 40, 'cpu_freq': {'current': 3.841025000000003, 'min': 3900.0, 'max': 3900.0}, 'cpu_freq_per_core': [{'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.526, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.69, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.688, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.686, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}, {'current': 3.9, 'min': 3900.0, 'max': 3900.0}], 'disk': {'total': 188.2843132019043, 'used': 9.143146514892578}, 'gpu': 'Quadro RTX 6000', 'gpu_count': 1, 'gpu_devices': [{'name': 'Quadro RTX 6000', 'memory_total': 25769803776}], 'memory': {'total': 376.5686264038086}}
+2023-08-03 07:38:13,371 INFO    HandlerThread:51536 [system_monitor.py:probe():211] Finished collecting system info
+2023-08-03 07:38:13,371 INFO    HandlerThread:51536 [system_monitor.py:probe():214] Publishing system info
+2023-08-03 07:38:13,371 DEBUG   HandlerThread:51536 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2023-08-03 07:38:13,372 DEBUG   HandlerThread:51536 [system_info.py:_save_pip():67] Saving pip packages done
+2023-08-03 07:38:13,372 DEBUG   HandlerThread:51536 [system_info.py:_save_conda():74] Saving list of conda packages installed into the current environment
+2023-08-03 07:38:14,104 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_created():271] file/dir created: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/requirements.txt
+2023-08-03 07:38:14,104 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_created():271] file/dir created: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/conda-environment.yaml
+2023-08-03 07:38:14,104 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_created():271] file/dir created: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/wandb-summary.json
+2023-08-03 07:38:15,687 DEBUG   HandlerThread:51536 [system_info.py:_save_conda():86] Saving conda packages done
+2023-08-03 07:38:15,688 INFO    HandlerThread:51536 [system_monitor.py:probe():216] Finished publishing system info
+2023-08-03 07:38:15,690 DEBUG   SenderThread:51536 [sender.py:send():379] send: files
+2023-08-03 07:38:15,690 INFO    SenderThread:51536 [sender.py:_save_file():1375] saving file wandb-metadata.json with policy now
+2023-08-03 07:38:15,703 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:38:15,704 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:38:15,850 DEBUG   SenderThread:51536 [sender.py:send():379] send: telemetry
+2023-08-03 07:38:16,032 INFO    wandb-upload_0:51536 [upload_job.py:push():131] Uploaded file /tmp/tmpny1nrutlwandb/vqkgph7r-wandb-metadata.json
+2023-08-03 07:38:16,105 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_modified():288] file/dir modified: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/conda-environment.yaml
+2023-08-03 07:38:16,105 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_created():271] file/dir created: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/wandb-metadata.json
+2023-08-03 07:38:17,851 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:38:22,851 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:38:27,852 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:38:30,701 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:38:30,702 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:38:32,877 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:38:36,111 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_created():271] file/dir created: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/output.log
+2023-08-03 07:38:38,112 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_modified():288] file/dir modified: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/output.log
+2023-08-03 07:38:38,209 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:38:43,213 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:38:44,114 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_modified():288] file/dir modified: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/config.yaml
+2023-08-03 07:38:45,702 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:38:45,703 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:38:48,894 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:38:53,895 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:38:58,118 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_modified():288] file/dir modified: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/output.log
+2023-08-03 07:38:59,559 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:00,703 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:39:00,703 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:39:04,835 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:09,836 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:13,319 DEBUG   SystemMonitor:51536 [system_monitor.py:_start():159] Starting system metrics aggregation loop
+2023-08-03 07:39:13,320 DEBUG   SenderThread:51536 [sender.py:send():379] send: stats
+2023-08-03 07:39:15,321 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:15,702 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:39:15,703 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:39:18,125 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_modified():288] file/dir modified: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/output.log
+2023-08-03 07:39:20,405 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:25,406 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:30,407 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:30,702 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:39:30,703 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:39:35,868 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:40,132 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_modified():288] file/dir modified: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/output.log
+2023-08-03 07:39:40,983 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:43,321 DEBUG   SenderThread:51536 [sender.py:send():379] send: stats
+2023-08-03 07:39:45,703 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:39:45,703 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:39:46,827 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:51,828 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:57,743 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:39:58,137 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_modified():288] file/dir modified: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/output.log
+2023-08-03 07:40:00,703 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:40:00,703 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:40:02,857 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:40:07,858 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:40:12,859 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:40:13,322 DEBUG   SenderThread:51536 [sender.py:send():379] send: stats
+2023-08-03 07:40:15,704 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-03 07:40:15,704 DEBUG   SenderThread:51536 [sender.py:send_request():406] send_request: stop_status
+2023-08-03 07:40:18,144 INFO    Thread-12 :51536 [dir_watcher.py:_on_file_modified():288] file/dir modified: /mmfs1/gscratch/rao/aresf/Code/STSPNet/wandb/run-20230803_073812-h5cbjq8d/files/output.log
+2023-08-03 07:40:18,846 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report
+2023-08-03 07:40:23,847 DEBUG   HandlerThread:51536 [handler.py:handle_request():144] handle_request: status_report

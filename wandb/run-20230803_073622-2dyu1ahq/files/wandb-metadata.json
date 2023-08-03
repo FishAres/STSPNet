@@ -1,0 +1,244 @@
+{
+    "os": "Linux-4.18.0-348.23.1.el8_5.x86_64-x86_64-with-glibc2.28",
+    "python": "3.9.16",
+    "heartbeatAt": "2023-08-03T14:36:23.141317",
+    "startedAt": "2023-08-03T14:36:22.629531",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "<python with no main file>",
+    "git": {
+        "remote": "https://github.com/FishAres/STSPNet.git",
+        "commit": "d9116f99e91c2f657fb489a1001a32fb8a19357e"
+    },
+    "email": "fiseraris@gmail.com",
+    "root": "/mmfs1/gscratch/rao/aresf/Code/STSPNet",
+    "host": "g3022",
+    "username": "aresf",
+    "executable": "/gscratch/rao/aresf/miniconda3/envs/stspnet/bin/python",
+    "cpu_count": 40,
+    "cpu_count_logical": 40,
+    "cpu_freq": {
+        "current": 3.8726500000000024,
+        "min": 3900.0,
+        "max": 3900.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.748,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.717,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.141,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3.9,
+            "min": 3900.0,
+            "max": 3900.0
+        }
+    ],
+    "disk": {
+        "total": 188.2843132019043,
+        "used": 9.14312744140625
+    },
+    "gpu": "Quadro RTX 6000",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "Quadro RTX 6000",
+            "memory_total": 25769803776
+        }
+    ],
+    "memory": {
+        "total": 376.5686264038086
+    }
+}

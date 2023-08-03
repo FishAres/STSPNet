@@ -1,0 +1,10 @@
+wandb_version: 1
+
+dprime_targ:
+  value: 2.3347392010641475
+patience:
+  value: 15
+pos_weight:
+  value: 1.0986378764413878
+syn_tau:
+  value: 18.00489017388291
