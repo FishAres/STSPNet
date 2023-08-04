@@ -125,6 +125,10 @@ def main():
         model = PERNN2(input_dim=input_dim,
                        hidden_dim=args.hidden_dim,
                        noise_std=args.noise_std).to(device)
+    elif args.model == 'PERNN':
+        model = PERNN(input_dim=input_dim,
+                       hidden_dim=args.hidden_dim,
+                       noise_std=args.noise_std).to(device)
     else:
         raise ValueError("Model not found")
 
@@ -137,7 +141,7 @@ def main():
             args, device, test_generator, model)
     else:
         dprime, hr, far, input, hidden, output, pred, image, labels, omit = test(
-            args, device, test_generator, model)
+            args, device, tes_generator, model)
 
     # Save results
     results_dict = {}
