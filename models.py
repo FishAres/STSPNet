@@ -354,7 +354,7 @@ class PERNN(nn.Module):
         self.init_weights()
 
         self.linear = nn.Linear(hidden_dim, 1)
-        self.pred = nn.Linear(hidden_dim, input_dim)
+        self.pred = nn.Linear(hidden_dim, input_dim * 2)
 
     def init_weights(self):
         stdv = 1.0 / math.sqrt(self.hidden_dim)

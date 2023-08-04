@@ -12,7 +12,7 @@ def PERNN_loss(output, inputs_post, labels, a_hat, rnn_criterion):
     L1 = rnn_criterion(output, labels.clamp(min=0))
     # print(inputs.shape, a_hat.shape)
     L2 = torch.sum((inputs_post - a_hat)**2)
-    return L1 + 0.05 * L2
+    return L1 + 0.01 * L2
 
 
 def train_me(args, device, train_generator, model, optimizer):
@@ -39,7 +39,7 @@ def train_me(args, device, train_generator, model, optimizer):
     model.hidden = model.init_hidden(args.batch_size).to(device)
 
     optimizer.zero_grad()
-    output, hidden, inputs, a_hat = model(inputs)
+    output, hidden, inputs, a_hat = model(inputs_prev)
 
     # Convert to binary prediction
     output = torch.sigmoid(output)
@@ -65,7 +65,7 @@ def train_me(args, device, train_generator, model, optimizer):
 
     # Clamp to zero since we only want "go" labels
     # loss = criterion(output, labels.clamp(min=0))
-    loss = PERNN_loss(output, inputs_post, labels, a_hat, rnn_criterion)
+    loss = PERNN_loss(output, inputs, labels, a_hat, rnn_criterion)
     # Apply mask and take mean
     loss = (loss * mask).mean()
 
@@ -110,21 +110,8 @@ def test(args, device, test_generator, model):
         (labels == -1).sum().item()
 
     # Compute dprime
-    # dprime_true = dprime(hit_rate, fa_rate)
-    go = (labels == 1).sum().item()
-    catch = (labels == -1).sum().item()
-    num_trials = (labels != 0).sum().item()
-    assert (go + catch) == num_trials
-
-    # dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
-    # dprime_old = dprime(hit_rate, fa_rate)
     dprime_true = dprime(hit_rate, fa_rate)
-    # try:
-    #     assert dprime_true == dprime_old
-    # except:
-    #     print(hit_rate, fa_rate)
-    #     print(dprime_true, dprime_old)
-
+    
     return dprime_true.item(), hit_rate, fa_rate, inputs, hidden, output, pred, image, labels, omit
 
 
