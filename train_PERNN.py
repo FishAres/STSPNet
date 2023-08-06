@@ -11,8 +11,11 @@ from utilities import *
 def PERNN_loss(output, inputs_post, labels, a_hat, rnn_criterion):
     L1 = rnn_criterion(output, labels.clamp(min=0))
     # print(inputs.shape, a_hat.shape)
-    L2 = torch.sum((inputs_post - a_hat)**2)
-    return L1 + 0.01 * L2
+    L_pred_err = torch.sum((inputs_post - a_hat)**2)
+    # todo: multiply L_pred_err by 0 to debug
+    # todo: then increment by a tiny scaling factor e.g. 1e-13
+    # then arrive at a reasonable value
+    return L1 + 0.01 * L_pred_err
 
 
 def train_me(args, device, train_generator, model, optimizer):
@@ -150,6 +153,7 @@ def train_PERNN():
                         help='random seed (default: 1)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
+    parser.add_argument('--pred_loss_w', type=float, default=0.0, help='weighting factor for prediction error loss in PERNN')
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -215,7 +219,7 @@ def train_PERNN():
     save_dir = './PARAM/'+args.model
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    save_path = save_dir+'/model_train_seed_'+str(args.seed)+'.pt'
+    save_path = save_dir+'/model_train_seed_'+str(args.seed)+'_' + str(args.pred_loss_w)+'.pt'
     torch.save({'epoch': epoch,
                 'loss': loss_list,
                 'dprime': dprime_list,
