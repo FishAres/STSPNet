@@ -40,7 +40,7 @@ def train_me(args, device, train_generator, model, optimizer):
     model.hidden = model.init_hidden(args.batch_size).to(device)
 
     optimizer.zero_grad()
-    output, hidden, inputs, a_hat = model(inputs)
+    output, hidden, inputs, a_hat = model(inputs_prev)
 
     # Convert to binary prediction
     output = torch.sigmoid(output)
@@ -114,6 +114,7 @@ def test(args, device, test_generator, model):
 
     # Compute dprime
     dprime_true = dprime(hit_rate, fa_rate)
+    
     
     return dprime_true.item(), hit_rate, fa_rate, inputs, hidden, output, pred, image, labels, omit
 
@@ -227,6 +228,7 @@ def train_PERNN():
     save_dir = './PARAM/'+args.model
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
+    save_path = save_dir+'/model_train_seed_'+str(args.seed)+'_' + str(args.pred_loss_w)+'.pt'
     save_path = save_dir+'/model_train_seed_'+str(args.seed)+'_' + str(args.pred_loss_w)+'.pt'
     torch.save({'epoch': epoch,
                 'loss': loss_list,

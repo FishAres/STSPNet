@@ -104,6 +104,7 @@ class STPENet(nn.Module):
             inputs_prev = F.relu(self.noise(inputs_prev))
         err = (1 / self.syn_tau) + self.syn_u * \
             0.5 * torch.tanh(inputs - inputs_prev)
+            0.5 * torch.tanh(inputs - inputs_prev)
 
         # print(torch.mean(err))
         syn_x_list = [self.syn_x]
