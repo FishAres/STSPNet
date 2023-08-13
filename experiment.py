@@ -56,6 +56,45 @@ def test_PERNN2(args, device, test_generator, model):
 
     return dprime_true.item(), hit_rate, fa_rate, inputs, hidden, output, pred, image, labels, omit
 
+def test_PERNN(args, device, test_generator, model):
+    """
+    Test model, get predictions and plot confusion matrix
+    """
+    model.eval()
+
+    with torch.no_grad():
+        # Get inputs and labels
+        inputs, inputs_prev, labels, image,  _, omit = test_generator.generate_batch()
+
+        # Send to device
+        inputs = torch.from_numpy(inputs).to(device)
+        inputs_prev = torch.from_numpy(inputs_prev).to(device)
+        labels = torch.from_numpy(labels).to(device)
+
+        # Initialize syn_x or hidden state
+        model.syn_x = model.init_syn_x(args.batch_size).to(device)
+        model.hidden = model.init_hidden(args.batch_size).to(device)
+
+        output, hidden, inputs, a_hat = model(inputs)
+    # Convert to binary prediction
+    output = torch.sigmoid(output)
+    pred = torch.bernoulli(output).byte()
+
+    pred = torch.hstack((pred, pred[:,-2:-1,:]))
+    
+    
+
+    # Compute hit rate and false alarm rate
+    hit_rate = (pred * (labels == 1)).sum().float().item() / \
+        (labels == 1).sum().item()
+    fa_rate = (pred * (labels == -1)).sum().float().item() / \
+        (labels == -1).sum().item()
+
+    # Compute dprime
+    dprime_true = dprime(hit_rate, fa_rate)
+    
+    return dprime_true.item(), hit_rate, fa_rate, inputs, hidden, output, pred, image, labels, omit
+
 
 def main():
     # Training settings
@@ -84,6 +123,7 @@ def main():
                         help='random seed (default: 1)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
+    parser.add_argument('--pred_loss_w', type=float, default=0.0)
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -97,6 +137,7 @@ def main():
     test_generator = StimGenerator(image_set=args.image_set, seed=args.seed,
                                    batch_size=args.batch_size, seq_length=args.seq_length,
                                    delay_dur=args.delay_dur, omit_frac=args.omit_frac)
+
 
     # Get input dimension of feature vector
     input_dim = len(test_generator.feature_dict[0])
@@ -125,6 +166,18 @@ def main():
         model = PERNN2(input_dim=input_dim,
                        hidden_dim=args.hidden_dim,
                        noise_std=args.noise_std).to(device)
+    elif args.model == 'PERNN':
+        model = PERNN(input_dim=input_dim,
+                       hidden_dim=args.hidden_dim,
+                       noise_std=args.noise_std).to(device)
+    elif args.model == 'PERNN_sub':
+        model = PERNN_sub(input_dim=input_dim,
+                       hidden_dim=args.hidden_dim,
+                       noise_std=args.noise_std).to(device)
+    elif args.model == 'PERNN_sub_STP':
+        model = PERNN_sub_STP(input_dim=input_dim,
+                       hidden_dim=args.hidden_dim,
+                       noise_std=args.noise_std).to(device)
     else:
         raise ValueError("Model not found")
 
@@ -134,6 +187,9 @@ def main():
     # Test model
     if args.model == 'PERNN2':
         dprime, hr, far, input, hidden, output, pred, image, labels, omit = test_PERNN2(
+            args, device, test_generator, model)
+    elif args.model == 'PERNN' or args.model == 'PERNN_sub':
+        dprime, hr, far, input, hidden, output, pred, image, labels, omit = test_PERNN(
             args, device, test_generator, model)
     else:
         dprime, hr, far, input, hidden, output, pred, image, labels, omit = test(
@@ -152,9 +208,9 @@ def main():
     results_dict['labels'] = labels.cpu().numpy()
 
     # Compute confusion matrix
-    response_matrix, total_matrix, confusion_matrix = compute_confusion_matrix(test_generator.num_images, labels,
-                                                                               image, pred,
-                                                                               test_generator.image_steps+test_generator.delay_steps)
+    response_matrix, total_matrix, confusion_matrix = compute_confusion_matrix(
+    test_generator.num_images, labels, image, pred,
+    test_generator.image_steps+test_generator.delay_steps)
 
     results_dict['response_matrix'] = response_matrix
     results_dict['total_matrix'] = total_matrix
@@ -183,7 +239,7 @@ def main():
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     pickle.dump(results_dict, open(os.path.join(save_path, "_".join(
-        [args.model, args.image_set, str(args.seed)])+'.pkl'), 'wb'), protocol=2)
+        [args.model, args.image_set, str(args.seed)]) + '_' + str(args.pred_loss_w) + '.pkl'), 'wb'), protocol=2)
 
 
 if __name__ == '__main__':

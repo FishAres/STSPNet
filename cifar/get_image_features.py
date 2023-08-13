@@ -92,8 +92,9 @@ def main():
          transforms.Normalize((0.479,), (0.239,))])
     kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
 
+    
     model = Net().to(device)
-    model.load_state_dict(torch.load('models/cifar_cnn_' +
+    model.load_state_dict(torch.load('cifar/models/cifar_cnn_' +
                                      str(args.seed)+'.pt'), strict=False)
     model.eval()
 
@@ -102,7 +103,8 @@ def main():
 
     for ifile, ofile in zip(input_files, output_files):
         # Only use the luminance matched image sets
-        pkl_file = '../data/Natural_Images_Lum_Matched_set_'+ifile+'_2017.07.14.pkl'
+        
+        pkl_file = './data/Natural_Images_Lum_Matched_set_'+ifile+'_2017.07.14.pkl'
         dataset = ChangeDetectionDataset(
             pkl_file=pkl_file, transform=transform)
         dataloader = DataLoader(dataset, batch_size=9,
@@ -111,6 +113,7 @@ def main():
         # Get the features
         images, _ = next(iter(dataloader))
         output = model(images.to(device))
+        
 
         # Save output as numpy file
         if not os.path.exists('features'):
@@ -120,4 +123,5 @@ def main():
 
 
 if __name__ == '__main__':
+
     main()

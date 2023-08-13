@@ -2,17 +2,18 @@ import os
 import argparse
 import numpy as np
 import torch
+import torch.nn.functional as F
 
 from stimulus import StimGenerator
 from models import *
 from utilities import *
 
 
-def PERNN_loss(output, inputs_post, labels, a_hat, rnn_criterion):
+def PERNN_loss(output, inputs_post, labels, a_hat, rnn_criterion, args):
     L1 = rnn_criterion(output, labels.clamp(min=0))
-    # print(inputs.shape, a_hat.shape)
-    L2 = torch.sum((inputs_post - a_hat)**2)
-    return L1 + 0.05 * L2
+    L_pred_err = torch.mean((a_hat - inputs_post)**2)
+    # L_pred_err = F.binary_cross_entropy(a_hat, inputs_norm)
+    return L1, L_pred_err
 
 
 def train_me(args, device, train_generator, model, optimizer):
@@ -25,12 +26,12 @@ def train_me(args, device, train_generator, model, optimizer):
     inputs, inputs_prev, labels, _, mask, _ = train_generator.generate_batch()
     # Send to device
     inputs_post = np.roll(inputs, -1, axis=1)
-    inputs_post[:, -1, :] = inputs[:, -1, :]
+    inputs_post = inputs_post[:,0:-1,:]
 
     inputs = torch.from_numpy(inputs).to(device)
     inputs_prev = torch.from_numpy(inputs_prev).to(device)
     inputs_post = torch.from_numpy(inputs_post).to(device)
-    # print(inputs.shape, inputs_post.shape)
+
     labels = torch.from_numpy(labels).to(device)
     mask = torch.from_numpy(mask).to(device)
 
@@ -45,18 +46,14 @@ def train_me(args, device, train_generator, model, optimizer):
     output = torch.sigmoid(output)
     pred = torch.bernoulli(output).byte()
 
+    labels = labels[:, 0:-1, :]
+    mask = mask[:,0:-1,:]
+
     # Compute hit rate and false alarm rate
     hit_rate = (pred * (labels == 1)).sum().float().item() / \
         (labels == 1).sum().item()
     fa_rate = (pred * (labels == -1)).sum().float().item() / \
         (labels == -1).sum().item()
-
-    # Compute dprime
-    # dprime_true = dprime(hit_rate, fa_rate)
-    go = (labels == 1).sum().item()
-    catch = (labels == -1).sum().item()
-    num_trials = (labels != 0).sum().item()
-    assert (go + catch) == num_trials
 
     dprime_true = dprime(hit_rate, fa_rate)
 
@@ -64,10 +61,13 @@ def train_me(args, device, train_generator, model, optimizer):
         reduction='none', pos_weight=torch.tensor([args.pos_weight]).to(device))
 
     # Clamp to zero since we only want "go" labels
-    # loss = criterion(output, labels.clamp(min=0))
-    loss = PERNN_loss(output, inputs_post, labels, a_hat, rnn_criterion)
+    l_task, l_pred_err = PERNN_loss(output, inputs_post, labels, a_hat, rnn_criterion, args)
     # Apply mask and take mean
+    loss = l_task + args.pred_loss_w * l_pred_err
     loss = (loss * mask).mean()
+    
+    l_task = (l_task * mask).mean()
+    l_pred_err = (l_pred_err * mask).mean()
 
     # L2 loss on hidden unit activations
     L2_loss = hidden.pow(2).mean()
@@ -76,7 +76,7 @@ def train_me(args, device, train_generator, model, optimizer):
     loss.backward()
     optimizer.step()
 
-    return loss.item(), dprime_true.item()
+    return loss.item(), l_task.item(), l_pred_err.item(), dprime_true.item()
 
 
 def test(args, device, test_generator, model):
@@ -103,6 +103,9 @@ def test(args, device, test_generator, model):
     output = torch.sigmoid(output)
     pred = torch.bernoulli(output).byte()
 
+    labels = labels[:,0:-1,:]
+    mask = mask[:,0:-1,:]
+
     # Compute hit rate and false alarm rate
     hit_rate = (pred * (labels == 1)).sum().float().item() / \
         (labels == 1).sum().item()
@@ -110,21 +113,8 @@ def test(args, device, test_generator, model):
         (labels == -1).sum().item()
 
     # Compute dprime
-    # dprime_true = dprime(hit_rate, fa_rate)
-    go = (labels == 1).sum().item()
-    catch = (labels == -1).sum().item()
-    num_trials = (labels != 0).sum().item()
-    assert (go + catch) == num_trials
-
-    # dprime_true = compute_dprime(hit_rate, fa_rate, go, catch, num_trials)
-    # dprime_old = dprime(hit_rate, fa_rate)
     dprime_true = dprime(hit_rate, fa_rate)
-    # try:
-    #     assert dprime_true == dprime_old
-    # except:
-    #     print(hit_rate, fa_rate)
-    #     print(dprime_true, dprime_old)
-
+    
     return dprime_true.item(), hit_rate, fa_rate, inputs, hidden, output, pred, image, labels, omit
 
 
@@ -151,7 +141,7 @@ def train_PERNN():
                         help='delay duration (default: 500 ms)')
     parser.add_argument('--batch-size', type=int, default=128, metavar='N',
                         help='number of train trial batches (default: 128)')
-    parser.add_argument('--epochs', type=int, default=5000, metavar='N',
+    parser.add_argument('--epochs', type=int, default=2500, metavar='N',
                         help='epoch train criterion (default: 5000)')
     parser.add_argument('--dprime', type=float, default=2.0, metavar='N',
                         help='dprime train criterion (default: 2.0)')
@@ -163,6 +153,10 @@ def train_PERNN():
                         help='random seed (default: 1)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
+    parser.add_argument('--pred_loss_w', type=float, default=0.0,
+                         help='weighting factor for prediction error loss in PERNN')
+    parser.add_argument('--task_loss_thresh', type=float, default=0.32,
+                         help='task performance criterion to stop training')
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
 
@@ -181,7 +175,7 @@ def train_PERNN():
     input_dim = len(train_generator.feature_dict[0])
 
     # Create model
-    if args.model == 'PERNN':
+    if args.model in ['PERNN', 'PERNN_sub', 'PERNN_sub_STP']:
         model = PERNN(input_dim=input_dim,
                       hidden_dim=args.hidden_dim,
                       syn_tau=args.syn_tau,
@@ -197,41 +191,48 @@ def train_PERNN():
 
     # Initialize tracking variables
     loss_list = []
+    l_task_list = []
+    l_pred_err_list = []
     dprime = 0
     dprime_list = []
     wait = 0
 
     for epoch in range(1, args.epochs + 1):
         # Train model
-        loss, dprime = train_me(args, device, train_generator,
+        loss, l_task, l_pred_err, dprime = train_me(args, device, train_generator,
                                 model, optimizer)
 
         loss_list.append(loss)
+        l_task_list.append(l_task)
+        l_pred_err_list.append(l_pred_err)
         dprime_list.append(dprime)
 
         if epoch % args.log_interval == 0:
             # Print current progress
-            print("Epoch: {}  loss: {:.4f}  dprime: {:.2f}".format(
-                epoch, loss, dprime))
+            print("Epoch: {}  task loss: {:.4f} pred loss: {:.4f} dprime: {:.2f}".format(
+                epoch, l_task, l_pred_err, dprime))
 
-        if dprime < args.dprime:
-            # Reset wait count
-            wait = 0
-        else:
-            # Increase wait count
-            wait += 1
-            # Stop training after wait exceeds patience
-            if wait >= args.patience:
-                break
+        if l_task < args.task_loss_thresh:
+            if dprime < args.dprime:
+                # Reset wait count
+                wait = 0
+            else:
+                # Increase wait count
+                wait += 1
+                # Stop training after wait exceeds patience
+                if wait >= args.patience:
+                    break
 
     # Save trained model
     save_dir = './PARAM/'+args.model
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-    save_path = save_dir+'/model_train_seed_'+str(args.seed)+'.pt'
+    save_path = save_dir+'/model_train_seed_'+str(args.seed)+'_' + str(args.pred_loss_w)+'.pt'
     torch.save({'epoch': epoch,
                 'loss': loss_list,
                 'dprime': dprime_list,
+                'l_task': l_task_list,
+                'l_pred_err': l_pred_err_list,
                 'state_dict': model.state_dict()}, save_path)
 
 

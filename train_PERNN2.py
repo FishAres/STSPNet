@@ -147,10 +147,14 @@ def train_PERNN2():
                         help='random seed (default: 1)')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
+    parser.add_argument('--cu-device', type=int, default=0)
+    
     args = parser.parse_args()
     use_cuda = not args.no_cuda and torch.cuda.is_available()
 
-    device = torch.device("cuda" if use_cuda else "cpu")
+    cu_device = args.cu_device
+    device_tag = "cuda".format(cu_device)
+    device = torch.device("cuda:{}".format(cu_device) if use_cuda else "cpu")
 
     # Set random seed
     np.random.seed(args.seed)

@@ -1,2 +1,8 @@
 /__pycache__
 /.vscode
+wandb/
+*.ipynb
+/PARAM/
+/RESULT/
+/cifar/data/
+/brian_models/

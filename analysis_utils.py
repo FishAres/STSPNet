@@ -186,12 +186,13 @@ def get_omit_trials(model_data):
         if trial_chunk.shape[0] == 19:
             omit_trial.append(trial_chunk)
 
-    omit_trial = np.stack(omit_trial).mean(axis=0).transpose()
+    # omit_trial = np.stack(omit_trial).mean(axis=0).transpose()
     return omit_trial
 
 
 def plot_omit_mean(omit_trial, ax):
-    ax.plot(omit_trial.mean(axis=0) / omit_trial.mean(axis=0).max(),
+    omit = np.stack(omit_trial).mean(axis=0).transpose()
+    ax.plot(omit.mean(axis=0) / omit.mean(axis=0).max(),
             color='blue', linewidth=3)
     # ax.plot(omit_trial.T)
     # ax.plot(omit_trial.mean(axis=0), color='blue', linewidth=3)
